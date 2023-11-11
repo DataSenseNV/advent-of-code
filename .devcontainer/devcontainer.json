@@ -1,0 +1,57 @@
+{
+	"name": "Advent of Code Container",
+
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
+
+	"forwardPorts": [8080],
+	"appPort": [8080],
+
+	"portsAttributes": {
+		"8080": {
+			"label": "Web port",
+			"requireLocalPort": true,
+			"onAutoForward": "ignore"
+		}
+	},
+
+	"customizations": {
+		"vscode": {
+			"settings": { 
+				"python.defaultInterpreterPath": "/usr/local/bin/python",
+				"workbench.colorTheme": "Andromeda Bordered",
+				"workbench.iconTheme": "material-icon-theme",
+				"editor.formatOnSave": true
+			},
+			"extensions": [
+				"aaron-bond.better-comments",
+				"donjayamanne.python-environment-manager",
+				"EliverLara.andromeda",
+				"esbenp.prettier-vscode",
+				"KevinRose.vsc-python-indent",
+				"ms-python.black-formatter",
+				"ms-python.isort",
+				"ms-python.python",
+				"ms-python.vscode-pylance",
+				"njqdev.vscode-python-typehint",
+				"oderwat.indent-rainbow",
+				"phplasma.csv-to-table",
+				"PKief.material-icon-theme",
+				"redhat.vscode-yaml",
+				"redhat.java",
+				"vscjava.vscode-java-debug",
+				"vscjava.vscode-java-dependency",
+				"VisualStudioExptTeam.vscodeintellicode",
+				"christian-kohler.path-intellisense",
+				"VisualStudioExptTeam.intellicode-api-usage-examples",
+				"VisualStudioExptTeam.vscodeintellicode-completions",
+				"TabNine.tabnine-vscode"
+			]
+		}
+	},
+
+	"postCreateCommand": "python3.11 -m pip install -r python/requirements.txt",
+
+	"runArgs": ["--name", "leetcode-container"]
+}

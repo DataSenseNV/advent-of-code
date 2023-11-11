@@ -53,5 +53,5 @@
 
 	"postCreateCommand": "python3.11 -m pip install -r python/requirements.txt",
 
-	"runArgs": ["--name", "leetcode-container"]
+	"runArgs": ["--name", "advent-of-container"]
 }

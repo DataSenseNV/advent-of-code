@@ -20,8 +20,6 @@ def translate_nums(input: str):
             numbers.append(input[index])
             continue
         for key, value in translations.items():
-            if len(key) + index > len(input):
-                continue
             if input[index : index + len(key)] == key:
                 numbers.append(value)
                 continue

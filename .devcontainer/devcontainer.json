@@ -5,22 +5,6 @@
 		"dockerfile": "Dockerfile"
 	},
 
-	"forwardPorts": [8080, 8888],
-	"appPort": [8080, 8888],
-
-	"portsAttributes": {
-		"8080": {
-			"label": "Web port",
-			"requireLocalPort": true,
-			"onAutoForward": "ignore"
-		},
-		"8888": {
-			"label": "Jupyter",
-			"requireLocalPort": true,
-			"onAutoForward": "ignore"
-		}
-	},
-
 	"customizations": {
 		"vscode": {
 			"settings": { 
@@ -59,6 +43,7 @@
 	},
 
 	"postCreateCommand": "python3.11 -m pip install -r python/requirements.txt",
+	"postStartCommand": "python3.11 -m jupyter notebook",
 
 	"runArgs": ["--name", "advent-of-container"]
 }

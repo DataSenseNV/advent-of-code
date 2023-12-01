@@ -20,15 +20,22 @@ RUN apt clean
 RUN rm -rf /var/lib/apt/lists/*
 ENV DEBIAN_FRONTEND=dialog
 
-RUN useradd -m -d /home/jim -p jim -s /bin/bash jim
-RUN usermod -aG sudo jim
+RUN useradd -m -d /home/coder -p coder -s /bin/bash coder
+RUN usermod -aG sudo coder
 
-USER jim
+USER coder
 
-RUN echo "export PATH=/home/jim/.local/bin:$PATH" >> /home/jim/.bashrc
+ADD "https://www.random.org/cgi-bin/randbyte?nbytes=10&format=h" skipcache
+RUN echo "export PATH=/home/coder/.local/bin:$PATH" >> /home/coder/.bashrc
+
+COPY python/requirements.txt /home/coder/requirements.txt
+
+RUN python3.11 -m pip install -r /home/coder/
+
+COPY jupyter_notebook_config.py /home/coder/.local/lib/python3.11/site-packages/
 
 WORKDIR /workspace
 
-EXPOSE 8080
+EXPOSE 8888
 
 CMD ["/bin/bash"]

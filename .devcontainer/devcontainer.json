@@ -5,12 +5,17 @@
 		"dockerfile": "Dockerfile"
 	},
 
-	"forwardPorts": [8080],
-	"appPort": [8080],
+	"forwardPorts": [8080, 8888],
+	"appPort": [8080, 8888],
 
 	"portsAttributes": {
 		"8080": {
 			"label": "Web port",
+			"requireLocalPort": true,
+			"onAutoForward": "ignore"
+		},
+		"8888": {
+			"label": "Jupyter",
 			"requireLocalPort": true,
 			"onAutoForward": "ignore"
 		}
@@ -19,7 +24,7 @@
 	"customizations": {
 		"vscode": {
 			"settings": { 
-				"python.defaultInterpreterPath": "/usr/local/bin/python",
+				"python.defaultInterpreterPath": "/usr/bin/python3.11",
 				"workbench.colorTheme": "Andromeda Bordered",
 				"workbench.iconTheme": "material-icon-theme",
 				"editor.formatOnSave": true
@@ -46,7 +51,9 @@
 				"christian-kohler.path-intellisense",
 				"VisualStudioExptTeam.intellicode-api-usage-examples",
 				"VisualStudioExptTeam.vscodeintellicode-completions",
-				"TabNine.tabnine-vscode"
+				"TabNine.tabnine-vscode",
+				"ms-toolsai.jupyter",
+				"ms-toolsai.jupyter-renderers"
 			]
 		}
 	},

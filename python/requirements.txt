@@ -4,3 +4,4 @@ PyYAML
 regex
 requests
 SQLAlchemy
+jupyter

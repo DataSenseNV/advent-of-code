@@ -1,7 +1,6 @@
 # Day 1 - Advent of Code 2023
 # https://adventofcode.com/2023/day/1
 
-
 def translate_nums(input: str):
     translations = {
         "one": "1",
@@ -25,7 +24,5 @@ def translate_nums(input: str):
                 continue
     return int(f"{numbers[0]}{numbers[-1]}")
 
-
-if __name__ == "__main__":
-    with open("python/01-12/input.txt", "r") as file:
-        print(sum([translate_nums(line) for line in file.readlines()]))
+with open("python/01-12/input.txt", "r") as file:
+    print(sum([translate_nums(line) for line in file.readlines()]))

@@ -1,7 +1,6 @@
 # Day 2 - Advent of Code 2023
 # https://adventofcode.com/2023/day/2
 
-
 count = 0
 with open("input.txt") as file:
     for line in file:
@@ -15,8 +14,9 @@ with open("input.txt") as file:
             for entry_data in game_entry:
                 entry_data = entry_data.split(" ")
                 dict[entry_data[2]] = max(dict[entry_data[2]], int(entry_data[1]))
-        if not (dict["red"] > 12 or dict["green"] > 13 or dict["blue"] > 14):
-            count += int(game_number)
-            print(game_number)
+        power = 1
+        for number in dict.values():
+            power *= number
+        count += power
 
 print(count)

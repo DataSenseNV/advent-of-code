@@ -1,3 +1,3 @@
 # advent-of-code
 
-![Alt Text](https://giphy.com/embed/oPu2IgQHwb3Qk)
+![Alt Text](https://media.giphy.com/media/oPu2IgQHwb3Qk/giphy.gif)

@@ -1,0 +1,2 @@
+import re
+print(sum([2**len(set([int(v) for v in re.findall("\d+",f.split("|")[0].split(":")[1])]).intersection(set([int(v) for v in re.findall("\d+",f.split("|")[1])])))//2 for f in open('input.txt','r').readlines()]))

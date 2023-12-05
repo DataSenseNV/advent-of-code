@@ -2,12 +2,12 @@
 # https://adventofcode.com/2023/day/5
 
 import numpy as np
+import copy
 
 
 def find_index_by_value(list, v):
     # list is a range of values
     # value is 1 value to be found in the range
-    print("Looking for {} in {}".format(v, list))
     for i, l in enumerate(list):
         if l[1] >= v >= l[0]:
             return i
@@ -15,7 +15,7 @@ def find_index_by_value(list, v):
 
 
 if __name__ == "__main__":
-    input = "python/05-12/test_input.txt"
+    input = "python/05-12/input.txt"
     with open(input) as f:
         lines = f.readlines()
         lines = [line.rstrip("\n") for line in lines]
@@ -29,15 +29,21 @@ if __name__ == "__main__":
             )
 
     step = 0
+    temp_prev_list = []
+    temp_new_list = []
     for l in lines[1:]:
         if len(l) == 0:
             print("")
             continue
         elif not l[0].isdigit():
+            instr_dict[step].extend(temp_prev_list)
+            instr_dict[step].extend(temp_new_list)
+
             step += 1
 
             print("step: {}".format(step))
-            instr_dict[step] = instr_dict[step - 1].copy()
+            temp_prev_list = instr_dict[step - 1].copy()
+            temp_new_list = []
             print(instr_dict)
             continue
         else:
@@ -50,6 +56,17 @@ if __name__ == "__main__":
             for z in instr_dict[step - 1]:  # [79, 92]
                 print("Previous step range: {}".format(z))
 
+                # for i in temp_prev_list:
+                #     if i[1] < i[0]:
+                #         print("prev")
+                #         print(temp_prev_list)
+                #         raise ValueError("y_min must be less than y_max")
+                # for i in temp_new_list:
+                #     if i[1] < i[0]:
+                #         print("new")
+                #         print(temp_new_list)
+                #         raise ValueError("y_min must be less than y_max")
+
                 if y_min <= z[0]:  # if y_min below range
                     if y_max < z[0]:  # if y_max below range
                         print("case 1: no match")
@@ -60,23 +77,24 @@ if __name__ == "__main__":
                         x_max = x_min + z[1] - z[0]
 
                         # remove z and add new x
-                        instr_dict[step].remove(z)
-                        instr_dict[step].append([x_min, x_max])
-                        print(instr_dict)
-
+                        temp_prev_list.remove(z)
+                        temp_new_list.append([x_min, x_max])
+                        print("Prev. list: {}".format(temp_prev_list))
+                        print("New list: {}".format(temp_new_list))
                     else:  # if y_max is in range
                         print("case 3: left overlap")
                         x_min = y0 + z[0] - y_min
                         x_max = y0 + y_max - y_min
 
-                        instr_dict[step].append([x_min, x_max])
+                        temp_new_list.append([x_min, x_max])
                         # remove left side of z
-                        i = find_index_by_value(instr_dict[step], z[0])
-                        instr_dict[step][i] = [
+                        i = find_index_by_value(temp_prev_list, z[0])
+                        temp_prev_list[i] = [
                             y_max + 1,
-                            instr_dict[step][i][1],
+                            temp_prev_list[i][1],
                         ]
-                        print(instr_dict)
+                        print("Prev. list: {}".format(temp_prev_list))
+                        print("New list: {}".format(temp_new_list))
 
                 elif y_min > z[1]:  # if y_min above range
                     print("case 4: no match")
@@ -87,31 +105,40 @@ if __name__ == "__main__":
                         x_min = y0
                         x_max = y0 + y_max - y_min
 
-                        instr_dict[step].append([x_min, x_max])
+                        print("Prev. list 1: {}".format(temp_prev_list))
+                        temp_new_list.append([x_min, x_max])
                         # adjust edges
                         # left edge
-                        i = find_index_by_value(instr_dict[step], y_min)
-                        instr_dict[step][i] = [
-                            instr_dict[step][i][0],
+                        i = find_index_by_value(temp_prev_list, y_min)
+                        i_0 = copy.deepcopy(temp_prev_list[i][0])
+                        i_1 = copy.deepcopy(temp_prev_list[i][1])
+                        temp_prev_list[i] = [
+                            i_0,
                             y_min - 1,
                         ]
                         # right edge
-                        instr_dict[step].append([y_max + 1, instr_dict[step][i][1]])
-                        print(instr_dict)
+                        print("Prev. list 2: {}".format(temp_prev_list))
+                        temp_prev_list.append([y_max + 1, i_1])
+                        print("Prev. list: {}".format(temp_prev_list))
+                        print("New list: {}".format(temp_new_list))
 
                     else:  # if y_max out of range
                         print("case 6: right overlap")
                         x_min = y0
                         x_max = y0 + z[1] - y_min
 
-                        instr_dict[step].append([x_min, x_max])
+                        temp_new_list.append([x_min, x_max])
                         # remove right side of z
-                        i = find_index_by_value(instr_dict[step], z[1])
-                        instr_dict[step][i] = [
-                            instr_dict[step][i][0],
+                        i = find_index_by_value(temp_prev_list, z[1])
+                        temp_prev_list[i] = [
+                            temp_prev_list[i][0],
                             y_min - 1,
                         ]
-                        print(instr_dict)
+                        print("Prev. list: {}".format(temp_prev_list))
+                        print("New list: {}".format(temp_new_list))
+
+    instr_dict[step].extend(temp_prev_list)
+    instr_dict[step].extend(temp_new_list)
 
     nearest_loc = np.inf
     for l in instr_dict[7]:

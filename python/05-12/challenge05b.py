@@ -3,8 +3,19 @@
 
 import numpy as np
 
+
+def find_index_by_value(list, v):
+    # list is a range of values
+    # value is 1 value to be found in the range
+    print("Looking for {} in {}".format(v, list))
+    for i, l in enumerate(list):
+        if l[1] >= v >= l[0]:
+            return i
+    print("niks gevonden maat")
+
+
 if __name__ == "__main__":
-    input = "python/05-12/input.txt"
+    input = "python/05-12/test_input.txt"
     with open(input) as f:
         lines = f.readlines()
         lines = [line.rstrip("\n") for line in lines]
@@ -17,108 +28,90 @@ if __name__ == "__main__":
                 [int(seed), int(seed) + int(lines[0].split(" ")[1:][i + 1]) - 1]
             )
 
-    instruction = 0
+    step = 0
     for l in lines[1:]:
         if len(l) == 0:
+            print("")
             continue
         elif not l[0].isdigit():
-            instruction += 1
+            step += 1
 
-            if instruction > 1:
-                for r in remaining_instr:
-                    instr_dict[instruction - 1].append(r)
-                    print("Remaining instruction added: {}".format(r))
-            remaining_instr = instr_dict[instruction - 1].copy()
-            print("Instruction: {}".format(instruction))
-            # instr_dict[instruction] = instr_dict[instruction - 1]
+            print("step: {}".format(step))
+            instr_dict[step] = instr_dict[step - 1].copy()
+            print(instr_dict)
             continue
         else:
             # 50 98 2
-            x_min = int(l.split(" ")[0])
+            y0 = int(l.split(" ")[0])
             y_min = int(l.split(" ")[1])
             y_max = int(l.split(" ")[1]) + int(l.split(" ")[2]) - 1
-            print("New instructions: {} {} {}".format(x_min, y_min, y_max))
+            print("New steps: {} {} {}".format(y0, y_min, y_max))
 
-            for prev_instr in instr_dict[instruction - 1]:  # [79, 92]
-                print("Previous instruction range: {}".format(prev_instr))
+            for z in instr_dict[step - 1]:  # [79, 92]
+                print("Previous step range: {}".format(z))
 
-                if y_min < prev_instr[0]:  # if y_min below range
-                    if y_max < prev_instr[0]:  # if y_max below range
+                if y_min <= z[0]:  # if y_min below range
+                    if y_max < z[0]:  # if y_max below range
+                        print("case 1: no match")
                         continue
-                    elif y_max > prev_instr[1]:  # if y_max above range
-                        new_range_min = x_min + prev_instr[0] - y_min
-                        new_range_max = new_range_min + prev_instr[1] - prev_instr[0]
-                        new_instr_range = [new_range_min, new_range_max]
-                        instr_dict[instruction].append(new_instr_range)
+                    elif y_max >= z[1]:  # if y_max above range
+                        print("case 2: full overlap")
+                        x_min = y0 + z[0] - y_min
+                        x_max = x_min + z[1] - z[0]
 
-                        for x in remaining_instr:
-                            if x == prev_instr:
-                                remaining_instr.remove(x)
+                        # remove z and add new x
+                        instr_dict[step].remove(z)
+                        instr_dict[step].append([x_min, x_max])
+                        print(instr_dict)
 
-                        print("case 1")
                     else:  # if y_max is in range
-                        new_range_min = x_min + prev_instr[0] - y_min
-                        new_range_max = x_min + y_max - y_min
-                        new_instr_range = [new_range_min, new_range_max]
-                        instr_dict[instruction].append(new_instr_range)
+                        print("case 3: left overlap")
+                        x_min = y0 + z[0] - y_min
+                        x_max = y0 + y_max - y_min
 
-                        for i, x in enumerate(remaining_instr):
-                            if x[0] <= y_max <= x[1]:
-                                if y_max == x[1]:
-                                    remaining_instr.remove(x)
-                                else:
-                                    remaining_instr[i] = [y_max + 1, x[1]]
+                        instr_dict[step].append([x_min, x_max])
+                        # remove left side of z
+                        i = find_index_by_value(instr_dict[step], z[0])
+                        instr_dict[step][i] = [
+                            y_max + 1,
+                            instr_dict[step][i][1],
+                        ]
+                        print(instr_dict)
 
-                        print("case 2")
-                elif y_min > prev_instr[1]:  # if y_min above range
+                elif y_min > z[1]:  # if y_min above range
+                    print("case 4: no match")
                     continue
                 else:  # if y_min in range
-                    if y_max <= prev_instr[1]:  # if y_max in range
-                        new_range_min = x_min
-                        new_range_max = x_min + y_max - y_min
-                        new_instr_range = [new_range_min, new_range_max]
-                        instr_dict[instruction].append(new_instr_range)
+                    if y_max <= z[1]:  # if y_max in range
+                        print("case 5: full inside")
+                        x_min = y0
+                        x_max = y0 + y_max - y_min
 
-                        add = False
-                        print(remaining_instr)
-                        for i, x in enumerate(remaining_instr):
-                            if x[0] <= y_max <= x[1]:
-                                if x[0] <= y_min <= x[1]:
-                                    if y_min == x[0]:
-                                        remaining_instr[i] = [-1, -1]
-                                    else:
-                                        print("Remaining: {}".format([y_max + 1, x[1]]))
-                                        remaining_instr[i] = [y_max + 1, x[1]]
-                                    if y_max == x[1]:
-                                        to_add = [-1, -1]
-                                    else:
-                                        to_add = [x[0], y_min - 1]
-                                        print("Remaining: {}".format(to_add))
-                                        add = True
-                        if add:
-                            remaining_instr.append(to_add)
+                        instr_dict[step].append([x_min, x_max])
+                        # adjust edges
+                        # left edge
+                        i = find_index_by_value(instr_dict[step], y_min)
+                        instr_dict[step][i] = [
+                            instr_dict[step][i][0],
+                            y_min - 1,
+                        ]
+                        # right edge
+                        instr_dict[step].append([y_max + 1, instr_dict[step][i][1]])
+                        print(instr_dict)
 
-                        print("case 3")
                     else:  # if y_max out of range
-                        new_range_min = y_min - prev_instr[0] + x_min
-                        new_range_max = prev_instr[1] - prev_instr[0] + x_min
-                        new_instr_range = [new_range_min, new_range_max]
-                        instr_dict[instruction].append(new_instr_range)
+                        print("case 6: right overlap")
+                        x_min = y0
+                        x_max = y0 + z[1] - y_min
 
-                        for i, x in enumerate(remaining_instr):
-                            if x[0] <= y_min <= x[1]:
-                                if x[1] == y_min:
-                                    remaining_instr.remove(x)
-                                else:
-                                    print("Remaining: {}".format([x[0], y_min - 1]))
-                                    remaining_instr[i] = [x[0], y_min - 1]
-
-                        print("case 4")
-
-            print(instr_dict)
-    for r in remaining_instr:
-        instr_dict[instruction].append(r)
-        print("Remaining instruction added: {}".format(r))
+                        instr_dict[step].append([x_min, x_max])
+                        # remove right side of z
+                        i = find_index_by_value(instr_dict[step], z[1])
+                        instr_dict[step][i] = [
+                            instr_dict[step][i][0],
+                            y_min - 1,
+                        ]
+                        print(instr_dict)
 
     nearest_loc = np.inf
     for l in instr_dict[7]:

@@ -2,7 +2,7 @@
 # https://adventofcode.com/2023/day/5
 
 if __name__ == "__main__":
-    input = "python/05-12/input.txt"
+    input = "python/05-12/test_input.txt"
     with open(input) as f:
         lines = f.readlines()
         lines = [line.rstrip("\n") for line in lines]

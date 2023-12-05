@@ -14,6 +14,15 @@ def find_index_by_value(list, v):
     print("niks gevonden maat")
 
 
+def find_invalid_values(list):
+    values_list = []
+    for l in list:
+        if l[1] < l[0]:
+            values_list.append(l)
+            print("Removing from list: {}".format(l))
+    return values_list
+
+
 if __name__ == "__main__":
     input = "python/05-12/input.txt"
     with open(input) as f:
@@ -93,6 +102,10 @@ if __name__ == "__main__":
                             y_max + 1,
                             temp_prev_list[i][1],
                         ]
+                        to_remove = find_invalid_values(temp_prev_list)
+                        for r in to_remove:
+                            temp_prev_list.remove(r)
+
                         print("Prev. list: {}".format(temp_prev_list))
                         print("New list: {}".format(temp_new_list))
 
@@ -105,7 +118,6 @@ if __name__ == "__main__":
                         x_min = y0
                         x_max = y0 + y_max - y_min
 
-                        print("Prev. list 1: {}".format(temp_prev_list))
                         temp_new_list.append([x_min, x_max])
                         # adjust edges
                         # left edge
@@ -117,8 +129,12 @@ if __name__ == "__main__":
                             y_min - 1,
                         ]
                         # right edge
-                        print("Prev. list 2: {}".format(temp_prev_list))
                         temp_prev_list.append([y_max + 1, i_1])
+
+                        to_remove = find_invalid_values(temp_prev_list)
+                        for r in to_remove:
+                            temp_prev_list.remove(r)
+
                         print("Prev. list: {}".format(temp_prev_list))
                         print("New list: {}".format(temp_new_list))
 
@@ -140,6 +156,8 @@ if __name__ == "__main__":
     instr_dict[step].extend(temp_prev_list)
     instr_dict[step].extend(temp_new_list)
 
+    for key in instr_dict:
+        print("Step: {}: {}".format(key, instr_dict[key]))
     nearest_loc = np.inf
     for l in instr_dict[7]:
         if l[0] < nearest_loc and l[0] != -1 and l[0] != 0:

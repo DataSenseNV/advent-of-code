@@ -36,7 +36,17 @@ def map_input_to_map_list(input_list: list[str]) -> list[list[tuple[int, int, in
 if __name__ == "__main__":
     puzzle_input = read_puzzle_input("python/05-12/input.txt")
     maps = map_input_to_map_list(puzzle_input)
-    seeds = maps.pop(0)[0]
+    seeds_range = maps.pop(0)[0]
+
+    seeds = []
+
+    for seed_range_start, seed_range_length in zip(
+        seeds_range[0::2], seeds_range[1::2]
+    ):
+        for seed in range(seed_range_start, seed_range_start + seed_range_length):
+            seeds.append(seed)
+
+    seeds = set(seeds)
 
     lowest_location = 0
     for seed in seeds:

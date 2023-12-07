@@ -5,8 +5,8 @@ from collections import Counter
 from itertools import product
 
 
-def calc_hand_score(hand, card_list):
-    uniques = len(Counter(hand))
+def calc_hand_score(original_hand, new_hand, card_list):
+    uniques = len(Counter(new_hand))
     s1 = 0
     max_identical = 0
     if uniques == 5:
@@ -14,12 +14,12 @@ def calc_hand_score(hand, card_list):
     elif uniques == 4:
         s1 = 2  # one pair
     elif uniques == 3:
-        if max(hand.count(item) for item in set(hand)) == 2:
+        if max(new_hand.count(item) for item in set(new_hand)) == 2:
             s1 = 3  # two pair
         else:
             s1 = 4  # three of a kind
     elif uniques == 2:
-        if max(hand.count(item) for item in set(hand)) == 3:
+        if max(new_hand.count(item) for item in set(new_hand)) == 3:
             s1 = 5  # full house
         else:
             s1 = 6  # four of a kind
@@ -28,7 +28,7 @@ def calc_hand_score(hand, card_list):
     s1 = f"{s1:02}"
 
     s2 = ""
-    for c in hand:
+    for c in original_hand:
         score = card_list.index(c)
         s2 += f"{score:02}"
 
@@ -72,7 +72,9 @@ if __name__ == "__main__":
 
         max_score = 0
         for new_hand in all_hands:
-            score = calc_hand_score(new_hand, card_list)
+            score = calc_hand_score(
+                original_hand=hand, new_hand=new_hand, card_list=card_list
+            )
             if score > max_score:
                 best_hand = new_hand
                 max_score = score
@@ -88,3 +90,4 @@ if __name__ == "__main__":
     print("Total winnings: {}".format(total_winnings))
 
 # 252145696 too high
+# 252137472
